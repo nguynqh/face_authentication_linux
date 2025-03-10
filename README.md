@@ -1,6 +1,6 @@
 # 🔐 Face Authentication System for Linux
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<!-- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) -->
 [![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
 [![OpenCV](https://img.shields.io/badge/opencv-%23white.svg?style=flat&logo=opencv&logoColor=white)](https://opencv.org/)
@@ -8,7 +8,6 @@
 
 <div align="center">
 
-![Face Recognition Banner](https://i.imgur.com/placeholder-image.png)
 
 *Secure your Linux system with the power of facial recognition technology*
 
@@ -33,7 +32,6 @@
   - [❓ Troubleshooting](#-troubleshooting)
   - [🔒 Security Notes](#-security-notes)
   - [📊 Performance](#-performance)
-  - [📜 License](#-license)
 
 ## ✨ Features
 
@@ -293,9 +291,9 @@ The system performance depends on:
 - **Lighting**: Good lighting improves recognition accuracy
 - **Camera quality**: Higher resolution cameras provide better facial detail
 
-## 📜 License
+<!-- ## 📜 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details. -->
 
 ---
 
