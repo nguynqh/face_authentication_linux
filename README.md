@@ -1,36 +1,60 @@
-# Face Authentication System for Linux
+# 🔐 Face Authentication System for Linux
 
-This project implements a face recognition-based authentication system for Linux using Python and the Pluggable Authentication Modules (PAM) framework. It allows users to log into their Linux system using facial recognition as an authentication method.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
+[![OpenCV](https://img.shields.io/badge/opencv-%23white.svg?style=flat&logo=opencv&logoColor=white)](https://opencv.org/)
+[![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=flat&logo=TensorFlow&logoColor=white)](https://www.tensorflow.org/)
 
-## Table of Contents
+<div align="center">
 
-- [Face Authentication System for Linux](#face-authentication-system-for-linux)
-  - [Table of Contents](#table-of-contents)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
+![Face Recognition Banner](https://i.imgur.com/placeholder-image.png)
+
+*Secure your Linux system with the power of facial recognition technology*
+
+</div>
+
+## 📋 Table of Contents
+
+- [🔐 Face Authentication System for Linux](#-face-authentication-system-for-linux)
+  - [📋 Table of Contents](#-table-of-contents)
+  - [✨ Features](#-features)
+  - [🔧 Prerequisites](#-prerequisites)
+  - [📥 Installation](#-installation)
     - [1. System Preparation](#1-system-preparation)
     - [2. Project Directory Setup](#2-project-directory-setup)
-  - [Project Structure](#project-structure)
-  - [Setup Process](#setup-process)
+  - [📁 Project Structure](#-project-structure)
+  - [🛠️ Setup Process](#️-setup-process)
     - [3. Face Data Collection](#3-face-data-collection)
     - [4. Model Training](#4-model-training)
     - [5. PAM Module Creation](#5-pam-module-creation)
     - [6. System Integration](#6-system-integration)
-  - [Usage](#usage)
-  - [Troubleshooting](#troubleshooting)
+  - [📝 Usage](#-usage)
+  - [❓ Troubleshooting](#-troubleshooting)
+  - [🔒 Security Notes](#-security-notes)
+  - [📊 Performance](#-performance)
+  - [📜 License](#-license)
 
-## Prerequisites
+## ✨ Features
 
-- Ubuntu/Debian-based Linux distribution
-- Python 3.6 or higher
-- Administrator (sudo) privileges
-- Webcam connected to your system
+- 👤 **Facial Recognition Authentication**: Log in using your face instead of typing passwords
+- 🔌 **PAM Integration**: Works with Linux's Pluggable Authentication Modules
+- 🛡️ **Security**: Local processing of facial data for enhanced privacy 
+- 🚪 **System-Wide Access**: Use with login screen, sudo commands, and screen unlock
 
-## Installation
+## 🔧 Prerequisites
+
+- **Ubuntu/Debian-based** Linux distribution
+- **Python 3.6** or higher
+- **Administrator** (sudo) privileges
+- **Webcam** connected to your system
+
+## 📥 Installation
 
 ### 1. System Preparation
 
-Install the required system packages:
+<details>
+<summary>📦 Install required system packages (click to expand)</summary>
 
 ```bash
 # Update package list
@@ -41,10 +65,12 @@ sudo apt install -y python3-pip python3-dev cmake build-essential pkg-config
 sudo apt install -y libopencv-dev
 sudo apt install -y libdlib-dev python3-venv
 ```
+</details>
 
 ### 2. Project Directory Setup
 
-Create and configure the project environment:
+<details>
+<summary>🗂️ Create and configure the project environment (click to expand)</summary>
 
 ```bash
 # Create project directory
@@ -63,8 +89,9 @@ pip install face_recognition dlib opencv-python
 # Create project structure
 mkdir -p models data scripts utils pam_module
 ```
+</details>
 
-## Project Structure
+## 📁 Project Structure
 
 After setup, your project directory should look like this:
 
@@ -83,11 +110,12 @@ face_auth_system/
     └── Makefile
 ```
 
-## Setup Process
+## 🛠️ Setup Process
 
 ### 3. Face Data Collection
 
-Create a script to collect facial data:
+<details>
+<summary>📸 Create a script to collect facial data (click to expand)</summary>
 
 ```bash
 # Create face collection script
@@ -95,10 +123,12 @@ nano scripts/collect_faces.py
 ```
 
 The code for this file can be found in `collect_faces.py` in this repository.
+</details>
 
 ### 4. Model Training
 
-Create a script to train the face recognition model:
+<details>
+<summary>🧠 Create a script to train the face recognition model (click to expand)</summary>
 
 ```bash
 # Create model training script
@@ -106,10 +136,12 @@ nano scripts/train_model.py
 ```
 
 The code for this file can be found in `train_model.py` in this repository.
+</details>
 
 ### 5. PAM Module Creation
 
-Create PAM module files:
+<details>
+<summary>🔗 Create PAM module files (click to expand)</summary>
 
 ```bash
 # Create PAM interface
@@ -118,8 +150,6 @@ nano pam_module/pam_face_auth.c
 
 The code for this file can be found in `pam_face_auth.c` in this repository.
 
-Create the face authentication script:
-
 ```bash
 # Create authentication script
 nano scripts/face_auth.py
@@ -127,16 +157,12 @@ nano scripts/face_auth.py
 
 The code for this file can be found in `face_auth.py` in this repository.
 
-Create the Makefile for compiling the PAM module:
-
 ```bash
 # Create Makefile
 nano pam_module/Makefile
 ```
 
 The code for this file can be found in `Makefile` in this repository.
-
-Create a startup script to activate the virtual environment when needed:
 
 ```bash
 # Create startup script
@@ -159,10 +185,12 @@ Make the script executable:
 ```bash
 chmod +x ~/face_auth_system/start_face_auth.sh
 ```
+</details>
 
 ### 6. System Integration
 
-Compile and install the PAM module:
+<details>
+<summary>🔧 Compile and install the PAM module (click to expand)</summary>
 
 ```bash
 # Compile the PAM module
@@ -174,8 +202,10 @@ sudo make install
 sudo cp ~/face_auth_system/scripts/face_auth.py /usr/local/bin/
 sudo chmod +x /usr/local/bin/face_auth.py
 ```
+</details>
 
-Integrate with the Linux PAM system:
+<details>
+<summary>⚙️ Integrate with the Linux PAM system (click to expand)</summary>
 
 ```bash
 # Backup the original PAM configuration (IMPORTANT!)
@@ -190,10 +220,13 @@ Add the following line before `@include common-auth` or at the beginning of the 
 ```
 auth sufficient pam_face_auth.so
 ```
+</details>
 
-## Usage
+## 📝 Usage
 
-1. First, collect your face data:
+<div class="usage-container" style="background-color: #f8f8f8; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;">
+
+1. **First, collect your face data:**
 
 ```bash
 # Activate the virtual environment
@@ -204,40 +237,78 @@ source venv/bin/activate
 python scripts/collect_faces.py --username nguynqh
 ```
 
-2. Train the face recognition model:
+2. **Train the face recognition model:**
 
 ```bash
 python scripts/train_model.py
 ```
 
-3. Test the authentication:
+3. **Test the authentication:**
 
-```bash
-# The system should now be configured to authenticate using facial recognition
-# You can test it by locking and unlocking your screen or by using sudo commands
-```
+The system should now be configured to authenticate using facial recognition.
+You can test it by locking and unlocking your screen or by using sudo commands.
 
-## Troubleshooting
+</div>
 
-- **PAM Module Issues**: If there are problems with the PAM module, you can restore your original PAM configuration using:
-  ```bash
-  sudo cp /etc/pam.d/common-auth.backup /etc/pam.d/common-auth
-  ```
+## ❓ Troubleshooting
 
-- **Path Issues**: If the system can't find the face authentication script, verify that:
-  1. The script is correctly installed at `/usr/local/bin/face_auth.py`
-  2. The script has executable permissions
-  3. The path in `pam_face_auth.c` matches your actual script path
+<table>
+  <tr>
+    <th>Problem</th>
+    <th>Solution</th>
+  </tr>
+  <tr>
+    <td>⚠️ <b>PAM Module Issues</b></td>
+    <td>If there are problems with the PAM module, restore your original PAM configuration using:
+    <pre>sudo cp /etc/pam.d/common-auth.backup /etc/pam.d/common-auth</pre></td>
+  </tr>
+  <tr>
+    <td>⚠️ <b>Path Issues</b></td>
+    <td>If the system can't find the face authentication script, verify that:
+    <ol>
+      <li>The script is correctly installed at <code>/usr/local/bin/face_auth.py</code></li>
+      <li>The script has executable permissions</li>
+      <li>The path in <code>pam_face_auth.c</code> matches your actual script path</li>
+    </ol></td>
+  </tr>
+  <tr>
+    <td>⚠️ <b>Camera Issues</b></td>
+    <td>Make sure your webcam is properly connected and working before using the face authentication system</td>
+  </tr>
+</table>
 
-- **Camera Issues**: Make sure your webcam is properly connected and working before using the face authentication system
+## 🔒 Security Notes
+
+> ⚠️ **Important:** Face recognition should be used as a convenience feature rather than the sole authentication method for highly sensitive systems.
+
+For enhanced security, consider:
+- Using face authentication alongside traditional password authentication
+- Regularly updating your facial data as your appearance changes
+- Ensuring good lighting conditions for optimal recognition
+
+## 📊 Performance
+
+The system performance depends on:
+- **Hardware**: Systems with better CPUs/GPUs will process facial recognition faster
+- **Lighting**: Good lighting improves recognition accuracy
+- **Camera quality**: Higher resolution cameras provide better facial detail
+
+## 📜 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 
-**Note**: Remember to update the path in `pam_face_auth.c` to point to your specific username:
-```c
-#define FACE_AUTH_SCRIPT "/home/<username_ubuntu>/face_auth_system/start_face_auth.sh"
-```
+<div align="center">
 
-Replace with your actual username before compiling the PAM module.
+**Made with ❤️ by nguynqh**
 
 **Last Updated**: 2025-03-10 (UTC)
+
+</div>
+
+> 💡 **Note**: Remember to update the path in `pam_face_auth.c` to point to your specific username:
+> ```c
+> #define FACE_AUTH_SCRIPT "/home/<username_ubuntu>/face_auth_system/start_face_auth.sh"
+> ```
+> Replace with your actual username before compiling the PAM module.
