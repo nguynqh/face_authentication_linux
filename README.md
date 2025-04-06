@@ -5,9 +5,9 @@
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
 [![OpenCV](https://img.shields.io/badge/opencv-%23white.svg?style=flat&logo=opencv&logoColor=white)](https://opencv.org/)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=flat&logo=TensorFlow&logoColor=white)](https://www.tensorflow.org/)
+[![PyQt5](https://img.shields.io/badge/Qt-41CD52?style=flat&logo=qt&logoColor=white)](https://www.qt.io/)
 
 <div align="center">
-
 
 *Secure your Linux system with the power of facial recognition technology*
 
@@ -29,6 +29,9 @@
     - [5. PAM Module Creation](#5-pam-module-creation)
     - [6. System Integration](#6-system-integration)
   - [📝 Usage](#-usage)
+    - [Command Line Interface (CLI)](#command-line-interface-cli)
+    - [Graphical User Interface (GUI)](#graphical-user-interface-gui)
+  - [🖥️ GUI Features](#️-gui-features)
   - [❓ Troubleshooting](#-troubleshooting)
   - [🔒 Security Notes](#-security-notes)
   - [📊 Performance](#-performance)
@@ -39,6 +42,7 @@
 - 🔌 **PAM Integration**: Works with Linux's Pluggable Authentication Modules
 - 🛡️ **Security**: Local processing of facial data for enhanced privacy 
 - 🚪 **System-Wide Access**: Use with login screen, sudo commands, and screen unlock
+- 🖥️ **Graphical Interface**: User-friendly GUI with real-time feedback
 
 ## 🔧 Prerequisites
 
@@ -46,6 +50,7 @@
 - **Python 3.6** or higher
 - **Administrator** (sudo) privileges
 - **Webcam** connected to your system
+- **PyQt5** for the graphical interface
 
 ## 📥 Installation
 
@@ -62,6 +67,7 @@ sudo apt update
 sudo apt install -y python3-pip python3-dev cmake build-essential pkg-config
 sudo apt install -y libopencv-dev
 sudo apt install -y libdlib-dev python3-venv
+sudo apt install -y python3-pyqt5
 ```
 </details>
 
@@ -83,6 +89,7 @@ source venv/bin/activate
 pip install numpy scikit-learn scikit-image pillow
 pip install tensorflow
 pip install face_recognition dlib opencv-python
+pip install pyqt5
 
 # Create project structure
 mkdir -p models data scripts utils pam_module
@@ -101,7 +108,8 @@ face_auth_system/
 ├── scripts/                # Python scripts
 │   ├── collect_faces.py
 │   ├── train_model.py
-│   └── face_auth.py
+│   ├── face_auth.py
+│   └── gui.py
 ├── utils/                  # Utility functions
 └── pam_module/             # PAM integration files
     ├── pam_face_auth.c
@@ -222,6 +230,8 @@ auth sufficient pam_face_auth.so
 
 ## 📝 Usage
 
+### Command Line Interface (CLI)
+
 <div class="usage-container" style="background-color: #f8f8f8; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;">
 
 1. **First, collect your face data:**
@@ -247,6 +257,34 @@ The system should now be configured to authenticate using facial recognition.
 You can test it by locking and unlocking your screen or by using sudo commands.
 
 </div>
+
+### Graphical User Interface (GUI)
+
+<div class="usage-container" style="background-color: #f8f8f8; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;">
+
+1. **Launch the GUI:**
+
+```bash
+# Activate the virtual environment
+cd ~/face_auth_system
+source venv/bin/activate
+
+# Run the GUI
+python scripts/face_auth_ui.py
+```
+
+2. **Use the GUI to collect face data and train the model:**
+
+The GUI provides an intuitive interface to collect face data and train the model. Follow the on-screen instructions.
+
+</div>
+
+## 🖥️ GUI Features
+
+- **Real-time Face Detection**: See your face detected in real-time
+- **Data Collection**: Easily collect face data with a single click
+- **Model Training**: Train the face recognition model directly from the GUI
+- **Status Updates**: Get real-time feedback on the status of data collection and model training
 
 ## ❓ Troubleshooting
 

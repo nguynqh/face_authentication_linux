@@ -6,6 +6,7 @@ import numpy as np
 import argparse
 import os
 import time
+import sys
 
 def authenticate_face(username, model_path="models/face_auth_model.pkl", confidence_threshold=0.6):
     # Kiểm tra xem model có tồn tại hay không
@@ -65,19 +66,60 @@ def authenticate_face(username, model_path="models/face_auth_model.pkl", confide
     
     cap.release()
     
-    # Xác thực thành công nếu có ít nhất 3/5 lần thử thành công
-    if successful_attempts >= 3:
-        print("SUCCESS")
-        return True
-    else:
-        print("FAILURE")
+    # Xác thực thành công nếu có ít nhất 3/5 lần thử thành
+
+# Add this new function to be used by the UI
+def get_face_auth_model(model_path="models/face_auth_model.pkl"):
+    """
+    Load and return the face authentication model.
+    Returns (clf, face_names, face_encodings) or (None, None, None) on failure
+    """
+    try:
+        if not os.path.exists(model_path):
+            print("Model doesn't exist")
+            return None, None, None
+            
+        with open(model_path, 'rb') as f:
+            return pickle.load(f)
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        return None, None, None
+
+def launch_gui():
+    """Launch the graphical user interface for face authentication"""
+    try:
+        # Import the GUI application
+        from face_auth_ui import FaceAuthUI, QApplication
+        
+        # Start the application
+        app = QApplication(sys.argv)
+        window = FaceAuthUI()
+        window.show()
+        sys.exit(app.exec_())
+    except ImportError as e:
+        print(f"Error loading GUI: {e}")
+        print("Make sure PyQt5 is installed: pip install PyQt5")
+        return False
+    except Exception as e:
+        print(f"Error launching GUI: {e}")
         return False
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Xác thực khuôn mặt")
-    parser.add_argument("--username", required=True, help="Tên người dùng để xác thực")
+    parser.add_argument("--username", help="Tên người dùng để xác thực")
     parser.add_argument("--model", default="models/face_auth_model.pkl", help="Đường dẫn đến file model")
     parser.add_argument("--threshold", type=float, default=0.6, help="Ngưỡng độ tin cậy")
+    parser.add_argument("--gui", action="store_true", help="Khởi chạy giao diện đồ họa")
     args = parser.parse_args()
     
-    authenticate_face(args.username, args.model, args.threshold)
+    # Launch GUI if requested
+    if args.gui:
+        launch_gui()
+    else:
+        # Make sure username is provided for CLI mode
+        if not args.username:
+            print("ERROR: Username is required for command-line authentication")
+            parser.print_help()
+            sys.exit(1)
+        # Run CLI authentication
+        authenticate_face(args.username, args.model, args.threshold)
