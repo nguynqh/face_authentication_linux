@@ -128,7 +128,27 @@ face_auth_system/
 nano scripts/collect_faces.py
 ```
 
-The code for this file can be found in `collect_faces.py` in this repository.
+The `collect_faces.py` script provides a modern, intuitive face registration interface:
+
+- **Guided Registration**: Visual oval guide to properly position your face
+- **Real-time Feedback**: Color indicators showing when your face is correctly positioned
+- **Progress Tracking**: Visual progress bar showing registration completion
+- **Visual Effects**: Subtle flash effect when capturing face images
+- **Automatic Capture**: Automatically captures images when face is properly positioned
+
+Run the script with:
+
+```bash
+python scripts/collect_faces.py --username <your_username> --samples 40
+```
+
+Follow the on-screen instructions:
+1. Press 's' to start registration
+2. Position your face within the oval guide (turns green when correctly positioned)
+3. Hold still while images are automatically captured
+4. Registration completes when all samples are collected
+
+The face data will be saved to the `data/<username>` directory.
 </details>
 
 ### 4. Model Training
@@ -234,16 +254,22 @@ auth sufficient pam_face_auth.so
 
 <div class="usage-container" style="background-color: #f8f8f8; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;">
 
-1. **First, collect your face data:**
+1. **First, register your face:**
 
 ```bash
 # Activate the virtual environment
 cd ~/face_auth_system
 source venv/bin/activate
 
-# Collect face data (replace username with your Linux username)
+# Register your face (replace username with your Linux username)
 python scripts/collect_faces.py --username nguynqh
 ```
+
+This launches an intuitive face registration interface:
+- Position your face within the oval guide
+- The system automatically captures face samples when properly positioned
+- A progress bar shows registration completion status
+- Registration completes when all samples are collected
 
 2. **Train the face recognition model:**
 
@@ -281,8 +307,10 @@ The GUI provides an intuitive interface to collect face data and train the model
 
 ## 🖥️ GUI Features
 
+- **Intuitive Face Registration**: Modern UI with oval guide for face positioning
+- **Visual Feedback**: Color indicators show when face is correctly positioned
+- **Progress Tracking**: See real-time progress of face data collection
 - **Real-time Face Detection**: See your face detected in real-time
-- **Data Collection**: Easily collect face data with a single click
 - **Model Training**: Train the face recognition model directly from the GUI
 - **Status Updates**: Get real-time feedback on the status of data collection and model training
 
