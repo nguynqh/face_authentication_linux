@@ -52,6 +52,10 @@ class FaceAuthGUI(Gtk.Window):
         self.face_verified = False
         self.face_encoding = self.load_face_encoding()
         
+        # Biến đếm số lần thử
+        self.attempt_count = 0
+        self.max_attempts = 3
+        
         # Khởi tạo luồng camera riêng biệt
         self.camera_thread = None
         self.cap = None
@@ -121,6 +125,12 @@ class FaceAuthGUI(Gtk.Window):
         self.status_label.set_justify(Gtk.Justification.CENTER)
         main_box.pack_start(self.status_label, False, False, 0)
         
+        # Hiển thị số lần thử
+        self.attempt_label = Gtk.Label()
+        self.attempt_label.set_markup(f"<span size='small' alpha='70%'>Lần thử: 1/{self.max_attempts}</span>")
+        self.attempt_label.set_justify(Gtk.Justification.CENTER)
+        main_box.pack_start(self.attempt_label, False, False, 0)
+        
         # Các nút điều khiển
         button_box = Gtk.Box(spacing=20)
         button_box.set_halign(Gtk.Align.CENTER)
@@ -135,6 +145,16 @@ class FaceAuthGUI(Gtk.Window):
         self.password_button.connect("clicked", self.on_cancel_clicked)
         self.password_button.get_style_context().add_class("circular")
         button_box.pack_start(self.password_button, False, False, 0)
+        
+        # Retry button
+        self.retry_button = Gtk.Button()
+        retry_icon = Gtk.Image.new_from_icon_name("view-refresh-symbolic", Gtk.IconSize.BUTTON)
+        self.retry_button.add(retry_icon)
+        self.retry_button.set_tooltip_text("Thử lại")
+        self.retry_button.connect("clicked", self.on_retry_clicked)
+        self.retry_button.get_style_context().add_class("circular")
+        self.retry_button.set_sensitive(False)  # Disabled initially
+        button_box.pack_start(self.retry_button, False, False, 0)
         
         # Animation variables
         self.animation_state = "waiting"  # waiting, scanning, success, failure
@@ -646,14 +666,25 @@ class FaceAuthGUI(Gtk.Window):
         self.animation_state = "failure"
         self.progress = 0
         self.status_label.set_markup(f"<span size='medium' foreground='#ff5566'>{reason}</span>")
+        self.retry_button.set_sensitive(True)
         
-        # Ghi kết quả ra file
-        if self.result_path:
-            with open(self.result_path, 'w') as f:
-                f.write("FAILURE")
+        # Cập nhật số lần thử
+        self.attempt_count += 1
         
-        # Xóa lock file sau một lúc
-        GLib.timeout_add(2000, self.remove_lock_file)
+        # Hiển thị số lần thử
+        if self.attempt_count < self.max_attempts:
+            self.attempt_label.set_markup(f"<span size='small' alpha='70%'>Lần thử: {self.attempt_count+1}/{self.max_attempts}</span>")
+        else:
+            # Đã hết số lần thử
+            self.attempt_label.set_markup("<span size='small' foreground='#ff5566'>Đã hết số lần thử</span>")
+            
+            # Ghi kết quả ra file
+            if self.result_path:
+                with open(self.result_path, 'w') as f:
+                    f.write("MAX_ATTEMPTS_REACHED")
+            
+            # Xóa lock file sau một lúc
+            GLib.timeout_add(2000, self.remove_lock_file)
         
         return False
     
@@ -665,6 +696,26 @@ class FaceAuthGUI(Gtk.Window):
             except:
                 pass
         return False
+    
+    def on_retry_clicked(self, button):
+        """Xử lý khi người dùng nhấn nút thử lại"""
+        if self.attempt_count < self.max_attempts:
+            # Reset trạng thái xác thực
+            self.blink_count = 0
+            self.eye_closed_frames = 0
+            self.eye_open_frames = 0
+            self.face_verified = False
+            
+            # Chuyển về trạng thái quét lại
+            self.animation_state = "scanning"
+            self.progress = 0
+            self.status_label.set_markup("<span size='medium' alpha='90%'>Đang nhận diện...</span>")
+            
+            # Vô hiệu hóa nút thử lại
+            self.retry_button.set_sensitive(False)
+        else:
+            # Đã hết lượt thử -> chuyển sang xác thực mật khẩu
+            self.on_cancel_clicked(button)
     
     def on_cancel_clicked(self, button):
         """Xử lý khi người dùng nhấn nút hủy"""
@@ -862,4 +913,3 @@ if __name__ == "__main__":
     win.connect("destroy", Gtk.main_quit)
     win.show_all()
     Gtk.main()
-                            
