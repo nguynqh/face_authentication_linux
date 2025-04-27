@@ -1,0 +1,18 @@
+# Môi trường ảo
+venv/
+
+# Tệp biên dịch và thư viện động
+*.o
+*.so
+
+# Dữ liệu cá nhân (tùy chọn)
+data/
+
+# Tệp mô hình (tùy chọn nếu kích thước lớn)
+# models/*.pkl
+
+# Các tệp hệ thống
+.DS_Store
+__pycache__/
+*.py[cod]
+*.class

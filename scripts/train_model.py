@@ -5,6 +5,7 @@ import face_recognition
 import numpy as np
 from sklearn import svm
 import argparse
+import random
 
 def train_face_model(data_dir="data", model_output="models/face_auth_model.pkl"):
     # Kiểm tra thư mục dữ liệu
@@ -22,9 +23,11 @@ def train_face_model(data_dir="data", model_output="models/face_auth_model.pkl")
     face_names = []
     
     # Duyệt qua các thư mục người dùng
+    user_count = 0
     for user_dir in os.listdir(data_dir):
         user_path = os.path.join(data_dir, user_dir)
         if os.path.isdir(user_path):
+            user_count += 1
             print(f"Đang xử lý dữ liệu cho người dùng: {user_dir}")
             
             # Duyệt qua các file ảnh trong thư mục người dùng
@@ -48,6 +51,23 @@ def train_face_model(data_dir="data", model_output="models/face_auth_model.pkl")
     if len(face_encodings) == 0:
         print("Không có dữ liệu khuôn mặt nào được tìm thấy!")
         return
+        
+    # Nếu chỉ có 1 người dùng, tạo dữ liệu mẫu cho "người lạ"
+    if user_count == 1:
+        print("Phát hiện chỉ có 1 người dùng. Đang tạo dữ liệu mẫu cho lớp 'người lạ'...")
+        valid_user = face_names[0]
+        
+        # Tạo một số mẫu giả cho "người lạ" bằng cách biến đổi các encoding hiện có
+        stranger_count = min(len(face_encodings), 10)  # Số mẫu người lạ, tối đa 10
+        for i in range(stranger_count):
+            # Tạo encoding ngẫu nhiên khác với encoding hiện có
+            random_encoding = np.array(face_encodings[i]) + np.random.normal(0, 0.5, size=128)
+            random_encoding = random_encoding / np.linalg.norm(random_encoding)  # Chuẩn hóa lại
+            
+            face_encodings.append(random_encoding)
+            face_names.append("stranger")
+            
+        print(f"Đã tạo {stranger_count} mẫu cho lớp 'người lạ'")
     
     # Huấn luyện mô hình SVM
     print("Đang huấn luyện mô hình...")

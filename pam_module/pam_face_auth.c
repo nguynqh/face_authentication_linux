@@ -6,8 +6,8 @@
 #include <security/pam_modules.h>
 #include <security/pam_ext.h>
 
-//#define FACE_AUTH_SCRIPT "/usr/local/bin/face_auth.py"
-#define FACE_AUTH_SCRIPT "/home/nguynqh/face_auth_system/start_face_auth.sh"
+// Update this path to the absolute path of start_face_auth.sh in your project
+#define FACE_AUTH_SCRIPT "/home/izzy/Documents/face_authentication_linux/start_face_auth.sh"
 
 PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv) {
     const char *user;

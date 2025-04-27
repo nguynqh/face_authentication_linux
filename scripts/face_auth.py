@@ -21,11 +21,14 @@ def authenticate_face(username, model_path="models/face_auth_model.pkl", confide
         print(f"FAILURE: Không thể tải model: {e}")
         return False
     
-    # Khởi tạo camera
-    cap = cv2.VideoCapture(0)
+    # Khởi tạo camera - sử dụng camera với chỉ số 1 thay vì 0
+    cap = cv2.VideoCapture(1)
     if not cap.isOpened():
-        print("FAILURE: Không thể mở camera")
-        return False
+        print("Không thể mở camera với index 1! Thử với index 2...")
+        cap = cv2.VideoCapture(2)  # Thử với camera thứ 2 nếu camera thứ 1 không mở được
+        if not cap.isOpened():
+            print("FAILURE: Không thể mở camera nào!")
+            return False
     
     # Đợi camera khởi động
     time.sleep(1)

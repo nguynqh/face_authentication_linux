@@ -9,11 +9,14 @@ def collect_face_data(username, num_samples=40, output_dir="data"):
     user_dir = os.path.join(output_dir, username)
     os.makedirs(user_dir, exist_ok=True)
     
-    # Khởi tạo camera
-    cap = cv2.VideoCapture(0)
+    # Khởi tạo camera - sử dụng camera thứ 1 (index=1) thay vì camera mặc định (index=0)
+    cap = cv2.VideoCapture(1)
     if not cap.isOpened():
-        print("Không thể mở camera!")
-        return
+        print("Không thể mở camera với index 1! Thử với index 2...")
+        cap = cv2.VideoCapture(2)  # Thử với camera thứ 2 nếu camera thứ 1 không mở được
+        if not cap.isOpened():
+            print("Không thể mở camera nào! Hãy kiểm tra lại thiết bị camera của bạn.")
+            return
     
     # Tải bộ nhận diện khuôn mặt
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
