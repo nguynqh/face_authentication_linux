@@ -1,0 +1,20 @@
+[Unit]
+Description=Face Authentication System Service
+After=multi-user.target display-manager.target
+Wants=display-manager.target
+
+[Service]
+Type=simple
+User=izzy
+Group=izzy
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/izzy/.Xauthority
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+ExecStartPre=/bin/sh -c 'xhost +local:izzy'
+ExecStart=/bin/bash /home/izzy/Documents/face_authentication_linux/lockscreen_integration.sh --monitor-lock
+Restart=always
+RestartSec=5
+PAMName=login
+
+[Install]
+WantedBy=multi-user.target

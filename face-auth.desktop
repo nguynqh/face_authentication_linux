@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Face Authentication Service
+Comment=Khởi động dịch vụ xác thực khuôn mặt để mở khóa màn hình
+Exec=/home/izzy/Documents/face_authentication_linux/face-auth-starter.sh
+Icon=face-recognition
+Terminal=false
+X-GNOME-Autostart-enabled=true
+Hidden=false

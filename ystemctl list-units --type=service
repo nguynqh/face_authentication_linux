@@ -1,0 +1,47 @@
+[33mcommit 242e80f73127f9255d4e74b726cc06ea7eb0e196[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/face-auth-integration[m[33m, [m[1;31morigin/feature/face-auth-integration[m[33m)[m
+Author: Izzy1504 <khoiminhdoan1504@gmail.com>
+Date:   Sun Apr 27 22:52:13 2025 +0700
+
+    servic, UI and guidance
+
+[33mcommit e4c68990e5669a879597d58488441945784c63d8[m
+Author: Izzy1504 <khoiminhdoan1504@gmail.com>
+Date:   Sun Apr 27 19:10:53 2025 +0700
+
+    update
+
+[33mcommit 2276f7500e9248423eff8e48f495d3769306acb0[m
+Author: Izzy1504 <khoiminhdoan1504@gmail.com>
+Date:   Sun Apr 27 17:43:10 2025 +0700
+
+    Thêm tính năng xác thực khuôn mặt và giao diện quản lý
+
+[33mcommit 15c41ac786e9c64c7d7812e4482797f98f9e0eec[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: nguynqh <mequanghieu9@gmail.com>
+Date:   Mon Apr 21 23:42:56 2025 +0700
+
+    upload code
+
+[33mcommit 64340a1f23eede19bd1301ff7a8a75c5e81eb40a[m
+Author: nguynqh <mequanghieu9@gmail.com>
+Date:   Mon Mar 10 18:26:04 2025 +0700
+
+    Remove MIT license from README
+
+[33mcommit 5f890b6bad05f60f6ec3abcada2e2fe22c962fa6[m
+Author: nguynqh <mequanghieu9@gmail.com>
+Date:   Mon Mar 10 18:23:28 2025 +0700
+
+    Enhance README with improved formatting, features section, and installation details
+
+[33mcommit 5229aaa44da8653e1df0c2a2b3bff4b6f3da07ff[m
+Author: nguynqh <mequanghieu9@gmail.com>
+Date:   Mon Mar 10 18:14:56 2025 +0700
+
+    Update Readme, add installation guide
+
+[33mcommit f59020f783b012d003a32dc23af9e9fc79a60c68[m
+Author: Nguyễn Quang Hiếu <91005869+nguynqh@users.noreply.github.com>
+Date:   Mon Mar 10 17:30:59 2025 +0700
+
+    Initial commit
