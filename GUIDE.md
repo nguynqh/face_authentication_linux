@@ -11,8 +11,10 @@ Tài liệu này hướng dẫn chi tiết cách cài đặt và sử dụng h�
 5. [Huấn Luyện Mô Hình](#huấn-luyện-mô-hình)
 6. [Tích Hợp Vào Hệ Thống](#tích-hợp-vào-hệ-thống)
 7. [Cấu Hình Xác Thực Tại Màn Hình Đăng Nhập](#cấu-hình-xác-thực-tại-màn-hình-đăng-nhập)
-8. [Cách Sử Dụng](#cách-sử-dụng)
-9. [Xử Lý Sự Cố](#xử-lý-sự-cố)
+8. [Cấu Hình Xác Thực Tại Màn Hình Khóa](#cấu-hình-xác-thực-tại-màn-hình-khóa)
+9. [Cách Sử Dụng](#cách-sử-dụng)
+10. [Xử Lý Sự Cố](#xử-lý-sự-cố)
+11. [Lưu Ý Bảo Mật](#lưu-ý-bảo-mật)
 
 ## Yêu Cầu Hệ Thống
 
@@ -237,6 +239,101 @@ auth sufficient pam_face_auth.so
 
 3. Nếu nhận diện thành công, bạn sẽ được đăng nhập vào hệ thống mà không cần nhập mật khẩu.
 
+## Cấu Hình Xác Thực Tại Màn Hình Khóa
+
+Để hệ thống xác thực khuôn mặt hoạt động khi màn hình bị khóa, bạn cần thiết lập một service để giám sát trạng thái màn hình khóa và tự động kích hoạt xác thực khuôn mặt.
+
+### Phương Pháp 1: Sử dụng lockscreen_integration.sh
+
+Script `lockscreen_integration.sh` được thiết kế để tự động phát hiện và phản hồi khi màn hình bị khóa:
+
+```bash
+# Cấp quyền thực thi cho script
+chmod +x lockscreen_integration.sh
+
+# Chạy script để thiết lập
+./lockscreen_integration.sh
+```
+
+Chọn tùy chọn "Thiết lập hook cho màn hình khóa" từ menu. Script sẽ tự động cấu hình các hook thích hợp cho môi trường desktop của bạn.
+
+### Phương Pháp 2: Sử dụng systemd service (Khuyến nghị)
+
+Để đảm bảo tính nhất quán và khả năng tự khởi động sau khi reboot, bạn nên cấu hình một systemd service:
+
+1. Tạo file service từ template đã có:
+   ```bash
+   cp face-auth-lockscreen.service ~/.config/systemd/user/
+   ```
+
+2. Tạo thư mục chứa service nếu chưa tồn tại:
+   ```bash
+   mkdir -p ~/.config/systemd/user/
+   ```
+
+3. Cập nhật đường dẫn trong file service cho phù hợp với cài đặt của bạn:
+   ```bash
+   nano ~/.config/systemd/user/face-auth-lockscreen.service
+   ```
+   
+4. Kích hoạt và bắt đầu service:
+   ```bash
+   systemctl --user daemon-reload
+   systemctl --user enable face-auth-lockscreen.service
+   systemctl --user start face-auth-lockscreen.service
+   ```
+
+5. Kiểm tra trạng thái service:
+   ```bash
+   systemctl --user status face-auth-lockscreen.service
+   ```
+
+### Kiểm tra và điều chỉnh kích thước giao diện xác thực
+
+Cửa sổ xác thực có thể được điều chỉnh kích thước để hiển thị lớn hơn:
+
+1. Mở file `scripts/face_auth.py` để chỉnh sửa:
+   ```bash
+   nano scripts/face_auth.py
+   ```
+
+2. Tìm và điều chỉnh tham số `display_scale` (khoảng dòng 500):
+   ```python
+   display_scale = 2.0  # Tăng giá trị để làm cửa sổ lớn hơn
+   ```
+
+3. Lưu thay đổi và đóng editor.
+
+### Các bước tiếp theo sau khi cấu hình service
+
+Sau khi đã thiết lập thành công service và đã kích hoạt:
+
+1. **Khóa màn hình để kiểm tra**: Sử dụng tổ hợp phím `Super + L` để khóa màn hình. Hệ thống xác thực khuôn mặt sẽ tự động khởi động.
+
+2. **Điều chỉnh service nếu cần**:
+   - Nếu giao diện xác thực không hiện sau khi khóa màn hình, kiểm tra log:
+     ```bash
+     journalctl --user -u face-auth-lockscreen.service -f
+     ```
+   
+   - Kiểm tra log xác thực tại:
+     ```bash
+     cat /tmp/face_auth_debug.log
+     ```
+
+3. **Tùy chỉnh thời gian chờ và độ tin cậy**:
+   - Mở file `scripts/face_auth.py`
+   - Điều chỉnh `timeout_seconds` (thời gian chờ đọc khuôn mặt, mặc định 7 giây)
+   - Điều chỉnh `confidence_threshold` (ngưỡng độ tin cậy, mặc định 0.6)
+
+4. **Kiểm tra tự động khởi động**:
+   - Khởi động lại máy tính
+   - Đăng nhập và kiểm tra trạng thái service:
+     ```bash
+     systemctl --user status face-auth-lockscreen.service
+     ```
+   - Khóa màn hình để đảm bảo xác thực khuôn mặt hoạt động sau khi reboot
+
 ## Cách Sử Dụng
 
 Sau khi hoàn tất thiết lập, bạn có thể sử dụng xác thực khuôn mặt trong các trường hợp sau:
@@ -275,6 +372,31 @@ Nếu xác thực khuôn mặt không hoạt động tại màn hình đăng nh�
 3. Kiểm tra log xác thực:
    ```bash
    cat /tmp/face_auth.log
+   ```
+
+### Sự cố với systemd service
+
+Nếu service cho màn hình khóa không hoạt động:
+
+1. Kiểm tra trạng thái và log của service:
+   ```bash
+   systemctl --user status face-auth-lockscreen.service
+   journalctl --user -u face-auth-lockscreen.service
+   ```
+
+2. Đảm bảo file `lockscreen_integration.sh` có quyền thực thi:
+   ```bash
+   chmod +x lockscreen_integration.sh
+   ```
+
+3. Kiểm tra camera hoạt động:
+   ```bash
+   python3 scripts/test_camera.py
+   ```
+   
+4. Khởi động lại service sau khi sửa lỗi:
+   ```bash
+   systemctl --user restart face-auth-lockscreen.service
    ```
 
 ### Khôi phục cấu hình PAM gốc

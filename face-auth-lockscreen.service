@@ -1,0 +1,13 @@
+[Unit]
+Description=Face Authentication Lockscreen Monitor
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=/bin/bash /home/izzy/Documents/face_authentication_linux/lockscreen_integration.sh --monitor-lock
+Restart=always
+RestartSec=5
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=graphical-session.target
