@@ -1,378 +1,312 @@
-# 🔐 Face Authentication System for Linux
+🔐 Face Authentication System for Ubuntu 24.04
 
-<!-- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) -->
-[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
-[![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
-[![OpenCV](https://img.shields.io/badge/opencv-%23white.svg?style=flat&logo=opencv&logoColor=white)](https://opencv.org/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=flat&logo=TensorFlow&logoColor=white)](https://www.tensorflow.org/)
-[![PyQt5](https://img.shields.io/badge/Qt-41CD52?style=flat&logo=qt&logoColor=white)](https://www.qt.io/)
+Python 3.10+ Ubuntu OpenCV GTK3
 
-<div align="center">
+Secure your Ubuntu system with facial recognition - seamlessly integrated with system login, sudo, and lock screen
+📋 Table of Contents
 
-*Secure your Linux system with the power of facial recognition technology*
+    🔐 Face Authentication System for Ubuntu 24.04
+        📋 Table of Contents
+        ✨ Features
+        🔧 Prerequisites
+        📥 Installation
+            Automatic Installation
+            Manual Installation
+        📁 Project Structure
+        🛠️ Configuration
+            1. PAM Configuration
+            2. Face Registration
+            3. Testing the Authentication
+        📝 Usage
+        ❓ Common Issues & Troubleshooting
+            NumPy Version Issues
+            Permission Denied Errors
+            Lock Screen Not Working
+        🔒 Security Notes
+        📊 Performance Factors
 
-</div>
+✨ Features
 
-## 📋 Table of Contents
+    👤 Seamless Integration: Works with system login, sudo, and lock screen
+    🔌 PAM Integration: Integrates with Linux's Pluggable Authentication Modules
+    🛡️ Privacy-Focused: All processing is done locally, no data sent to external servers
+    🌙 Liveness Detection: Blink detection to prevent photo-based spoofing
+    🚪 Multi-context Support: GDM, LightDM, and console login support
+    🖥️ Modern GTK Interface: Clean, responsive interface for face registration
 
-- [🔐 Face Authentication System for Linux](#-face-authentication-system-for-linux)
-  - [📋 Table of Contents](#-table-of-contents)
-  - [✨ Features](#-features)
-  - [🔧 Prerequisites](#-prerequisites)
-  - [📥 Installation](#-installation)
-    - [1. System Preparation](#1-system-preparation)
-    - [2. Project Directory Setup](#2-project-directory-setup)
-  - [📁 Project Structure](#-project-structure)
-  - [🛠️ Setup Process](#️-setup-process)
-    - [3. Face Data Collection](#3-face-data-collection)
-    - [4. Model Training](#4-model-training)
-    - [5. PAM Module Creation](#5-pam-module-creation)
-    - [6. System Integration](#6-system-integration)
-  - [📝 Usage](#-usage)
-    - [Command Line Interface (CLI)](#command-line-interface-cli)
-    - [Graphical User Interface (GUI)](#graphical-user-interface-gui)
-  - [🖥️ GUI Features](#️-gui-features)
-  - [❓ Troubleshooting](#-troubleshooting)
-  - [🔒 Security Notes](#-security-notes)
-  - [📊 Performance](#-performance)
+🔧 Prerequisites
 
-## ✨ Features
+    Ubuntu 24.04 LTS
+    Python 3.10 or higher
+    Administrator (sudo) privileges
+    Working webcam
+    Proper lighting conditions
 
-- 👤 **Facial Recognition Authentication**: Log in using your face instead of typing passwords
-- 🔌 **PAM Integration**: Works with Linux's Pluggable Authentication Modules
-- 🛡️ **Security**: Local processing of facial data for enhanced privacy 
-- 🚪 **System-Wide Access**: Use with login screen, sudo commands, and screen unlock
-- 🖥️ **Graphical Interface**: User-friendly GUI with real-time feedback
+📥 Installation
+Automatic Installation
 
-## 🔧 Prerequisites
+The easiest way to install the system is using the provided installation script:
+bash
 
-- **Ubuntu/Debian-based** Linux distribution
-- **Python 3.6** or higher
-- **Administrator** (sudo) privileges
-- **Webcam** connected to your system
-- **PyQt5** for the graphical interface
+# Clone the repository (or download and extract)
+git clone https://github.com/nguynqh/face-auth.git
+cd face-auth
 
-## 📥 Installation
+# Make the installation script executable
+chmod +x install.sh
 
-### 1. System Preparation
+# Run the installation script
+sudo ./install.sh
 
-<details>
-<summary>📦 Install required system packages (click to expand)</summary>
+After installation, register your face:
+bash
 
-```bash
+sudo face_auth_register
+
+Manual Installation
+
+If you prefer to install manually, follow these steps:
+
+    Install Dependencies
+
+bash
+
 # Update package list
 sudo apt update
 
 # Install system dependencies
-sudo apt install -y python3-pip python3-dev cmake build-essential pkg-config
-sudo apt install -y libopencv-dev
-sudo apt install -y libdlib-dev python3-venv
-sudo apt install -y python3-pyqt5
-```
-</details>
+sudo apt install -y build-essential libpam0g-dev libgtk-3-dev python3-pip \
+    python3-dev python3-opencv python3-gi python3-cairo python3-gi-cairo \
+    gir1.2-gtk-3.0 v4l-utils cmake
 
-### 2. Project Directory Setup
+# Install Python libraries (using a specific NumPy version to avoid conflicts)
+sudo pip3 install face-recognition dlib numpy==1.26.4 imutils
 
-<details>
-<summary>🗂️ Create and configure the project environment (click to expand)</summary>
+    Install Python Modules and PAM Module
 
-```bash
-# Create project directory
-mkdir -p ~/face_auth_system
-cd ~/face_auth_system
+bash
 
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
+# Create necessary directories
+sudo mkdir -p /usr/lib/face-auth/face_auth
+sudo mkdir -p /usr/share/face-auth
+sudo mkdir -p /var/lib/face-auth
 
-# Install required Python packages
-pip install numpy scikit-learn scikit-image pillow
-pip install tensorflow
-pip install face_recognition dlib opencv-python
-pip install pyqt5
-
-# Create project structure
-mkdir -p models data scripts utils pam_module
-```
-</details>
-
-## 📁 Project Structure
-
-After setup, your project directory should look like this:
-
-```
-face_auth_system/
-├── venv/                   # Python virtual environment
-├── data/                   # For storing face data
-├── models/                 # For trained models
-├── scripts/                # Python scripts
-│   ├── collect_faces.py
-│   ├── train_model.py
-│   ├── face_auth.py
-│   └── gui.py
-├── utils/                  # Utility functions
-└── pam_module/             # PAM integration files
-    ├── pam_face_auth.c
-    └── Makefile
-```
-
-## 🛠️ Setup Process
-
-### 3. Face Data Collection
-
-<details>
-<summary>📸 Create a script to collect facial data (click to expand)</summary>
-
-```bash
-# Create face collection script
-nano scripts/collect_faces.py
-```
-
-The `collect_faces.py` script provides a modern, intuitive face registration interface:
-
-- **Guided Registration**: Visual oval guide to properly position your face
-- **Real-time Feedback**: Color indicators showing when your face is correctly positioned
-- **Progress Tracking**: Visual progress bar showing registration completion
-- **Visual Effects**: Subtle flash effect when capturing face images
-- **Automatic Capture**: Automatically captures images when face is properly positioned
-
-Run the script with:
-
-```bash
-python scripts/collect_faces.py --username <your_username> --samples 40
-```
-
-Follow the on-screen instructions:
-1. Press 's' to start registration
-2. Position your face within the oval guide (turns green when correctly positioned)
-3. Hold still while images are automatically captured
-4. Registration completes when all samples are collected
-
-The face data will be saved to the `data/<username>` directory.
-</details>
-
-### 4. Model Training
-
-<details>
-<summary>🧠 Create a script to train the face recognition model (click to expand)</summary>
-
-```bash
-# Create model training script
-nano scripts/train_model.py
-```
-
-The code for this file can be found in `train_model.py` in this repository.
-</details>
-
-### 5. PAM Module Creation
-
-<details>
-<summary>🔗 Create PAM module files (click to expand)</summary>
-
-```bash
-# Create PAM interface
-nano pam_module/pam_face_auth.c
-```
-
-The code for this file can be found in `pam_face_auth.c` in this repository.
-
-```bash
-# Create authentication script
-nano scripts/face_auth.py
-```
-
-The code for this file can be found in `face_auth.py` in this repository.
-
-```bash
-# Create Makefile
-nano pam_module/Makefile
-```
-
-The code for this file can be found in `Makefile` in this repository.
-
-```bash
-# Create startup script
-nano start_face_auth.sh
-```
-
-Add the following code to `start_face_auth.sh`:
-
-```bash
-#!/bin/bash
-# Path to the virtual environment
-VENV_PATH=~/face_auth_system/venv
-# Activate the virtual environment and run the face auth script
-source $VENV_PATH/bin/activate
-python /usr/local/bin/face_auth.py "$@"
-```
-
-Make the script executable:
-
-```bash
-chmod +x ~/face_auth_system/start_face_auth.sh
-```
-</details>
-
-### 6. System Integration
-
-<details>
-<summary>🔧 Compile and install the PAM module (click to expand)</summary>
-
-```bash
-# Compile the PAM module
-cd ~/face_auth_system/pam_module
+# Compile and install PAM module
+cd pam_module
 make
 sudo make install
 
-# Make the face authentication script accessible system-wide
-sudo cp ~/face_auth_system/scripts/face_auth.py /usr/local/bin/
-sudo chmod +x /usr/local/bin/face_auth.py
-```
-</details>
+# Install Python files
+sudo cp face_auth/*.py /usr/lib/face-auth/face_auth/
+sudo cp face_auth_ui/*.py /usr/lib/face-auth/
 
-<details>
-<summary>⚙️ Integrate with the Linux PAM system (click to expand)</summary>
+# Create symbolic links
+sudo ln -sf /usr/lib/face-auth/face_auth_ui/auth_ui.py /usr/bin/face_auth_ui
+sudo ln -sf /usr/lib/face-auth/face_auth_ui/register_ui.py /usr/bin/face_auth_register_ui
+sudo chmod +x /usr/bin/face_auth_ui
+sudo chmod +x /usr/bin/face_auth_register_ui
 
-```bash
-# Backup the original PAM configuration (IMPORTANT!)
-sudo cp /etc/pam.d/common-auth /etc/pam.d/common-auth.backup
+# Install registration script
+sudo cp utils/face_auth_register /usr/bin/
+sudo chmod +x /usr/bin/face_auth_register
 
-# Edit the PAM configuration file
-sudo nano /etc/pam.d/common-auth
-```
+# Create Python module structure
+sudo touch /usr/lib/face-auth/face_auth/__init__.py
 
-Add the following line before `@include common-auth` or at the beginning of the file if that line doesn't exist:
+# Install service
+sudo cp systemd/face-auth.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable face-auth.service
+sudo systemctl start face-auth.service
 
-```
-auth sufficient pam_face_auth.so
-```
-</details>
+    Configure PAM
 
-## 📝 Usage
+bash
 
-### Command Line Interface (CLI)
+# Back up original PAM configuration
+sudo cp /etc/pam.d/gdm-password /etc/pam.d/gdm-password.bak
 
-<div class="usage-container" style="background-color: #f8f8f8; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;">
+# Add face authentication to PAM (after pam_succeed_if.so and before @include common-auth)
+sudo nano /etc/pam.d/gdm-password
 
-1. **First, register your face:**
+Add this line after auth required pam_succeed_if.so user != root quiet_success:
+Code
 
-```bash
-# Activate the virtual environment
-cd ~/face_auth_system
-source venv/bin/activate
+auth    sufficient      pam_face_auth.so
 
-# Register your face (replace username with your Linux username)
-python scripts/collect_faces.py --username nguynqh
-```
+📁 Project Structure
+Code
 
-This launches an intuitive face registration interface:
-- Position your face within the oval guide
-- The system automatically captures face samples when properly positioned
-- A progress bar shows registration completion status
-- Registration completes when all samples are collected
+/usr/lib/face-auth/
+├── face_auth/             # Core authentication library
+│   ├── __init__.py
+│   ├── authenticator.py   # Authentication logic
+│   └── service.py         # Background service
+├── face_auth_ui/
+│   ├── auth_ui.py         # Authentication UI
+│   └── register_ui.py     # Registration UI
 
-2. **Train the face recognition model:**
+/usr/bin/
+├── face_auth_ui           # Symlink to auth_ui.py
+├── face_auth_register_ui  # Symlink to register_ui.py
+└── face_auth_register     # User-friendly registration script
 
-```bash
-python scripts/train_model.py
-```
+/var/lib/face-auth/        # Stores user face data
+├── nguynqh.txt            # Your face encoding data
+└── ...
 
-3. **Test the authentication:**
+/usr/share/face-auth/      # Shared resources
+└── shape_predictor_68_face_landmarks.dat  # Dlib model file
 
-The system should now be configured to authenticate using facial recognition.
-You can test it by locking and unlocking your screen or by using sudo commands.
+/lib/security/
+└── pam_face_auth.so       # PAM module
 
-</div>
+🛠️ Configuration
+1. PAM Configuration
 
-### Graphical User Interface (GUI)
+PAM must be configured for each authentication context where you want to use face authentication:
 
-<div class="usage-container" style="background-color: #f8f8f8; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;">
+    For Login Screen (GDM)
 
-1. **Launch the GUI:**
+bash
 
-```bash
-# Activate the virtual environment
-cd ~/face_auth_system
-source venv/bin/activate
+sudo nano /etc/pam.d/gdm-password
 
-# Run the GUI
-python scripts/face_auth_ui.py
-```
+Add after auth required pam_succeed_if.so user != root quiet_success:
+Code
 
-2. **Use the GUI to collect face data and train the model:**
+auth    sufficient      pam_face_auth.so
 
-The GUI provides an intuitive interface to collect face data and train the model. Follow the on-screen instructions.
+    For Lock Screen
 
-</div>
+bash
 
-## 🖥️ GUI Features
+sudo cp /etc/pam.d/gdm-password /etc/pam.d/gnome-screensaver
 
-- **Intuitive Face Registration**: Modern UI with oval guide for face positioning
-- **Visual Feedback**: Color indicators show when face is correctly positioned
-- **Progress Tracking**: See real-time progress of face data collection
-- **Real-time Face Detection**: See your face detected in real-time
-- **Model Training**: Train the face recognition model directly from the GUI
-- **Status Updates**: Get real-time feedback on the status of data collection and model training
+    For sudo (Optional)
 
-## ❓ Troubleshooting
+bash
 
-<table>
-  <tr>
-    <th>Problem</th>
-    <th>Solution</th>
-  </tr>
-  <tr>
-    <td>⚠️ <b>PAM Module Issues</b></td>
-    <td>If there are problems with the PAM module, restore your original PAM configuration using:
-    <pre>sudo cp /etc/pam.d/common-auth.backup /etc/pam.d/common-auth</pre></td>
-  </tr>
-  <tr>
-    <td>⚠️ <b>Path Issues</b></td>
-    <td>If the system can't find the face authentication script, verify that:
-    <ol>
-      <li>The script is correctly installed at <code>/usr/local/bin/face_auth.py</code></li>
-      <li>The script has executable permissions</li>
-      <li>The path in <code>pam_face_auth.c</code> matches your actual script path</li>
-    </ol></td>
-  </tr>
-  <tr>
-    <td>⚠️ <b>Camera Issues</b></td>
-    <td>Make sure your webcam is properly connected and working before using the face authentication system</td>
-  </tr>
-</table>
+sudo cp /etc/pam.d/sudo /etc/pam.d/sudo.bak
+sudo nano /etc/pam.d/sudo
 
-## 🔒 Security Notes
+Add after @include common-auth:
+Code
 
-> ⚠️ **Important:** Face recognition should be used as a convenience feature rather than the sole authentication method for highly sensitive systems.
+auth    sufficient      pam_face_auth.so
 
-For enhanced security, consider:
-- Using face authentication alongside traditional password authentication
-- Regularly updating your facial data as your appearance changes
-- Ensuring good lighting conditions for optimal recognition
+2. Face Registration
 
-## 📊 Performance
+Register your face using the registration utility:
+bash
 
-The system performance depends on:
-- **Hardware**: Systems with better CPUs/GPUs will process facial recognition faster
-- **Lighting**: Good lighting improves recognition accuracy
-- **Camera quality**: Higher resolution cameras provide better facial detail
+sudo face_auth_register
 
-<!-- ## 📜 License
+Or for a specific user:
+bash
 
-This project is licensed under the MIT License - see the LICENSE file for details. -->
+sudo face_auth_register username
 
----
+This will open a GTK interface where you'll be guided through the registration process:
 
-<div align="center">
+    Click "Start" to begin registration
+    Look directly at the camera and blink 3 times when prompted
+    The system will automatically capture your face encoding when completed
 
-**Made with ❤️ by nguynqh**
+3. Testing the Authentication
 
-**Last Updated**: 2025-03-10 (UTC)
+Test if the authentication works:
+bash
 
-</div>
+face_auth_test
 
-> 💡 **Note**: Remember to update the path in `pam_face_auth.c` to point to your specific username:
-> ```c
-> #define FACE_AUTH_SCRIPT "/home/<username_ubuntu>/face_auth_system/start_face_auth.sh"
-> ```
-> Replace with your actual username before compiling the PAM module.
+This will simulate the authentication process without actually authenticating, allowing you to verify that your face is recognized correctly.
+📝 Usage
+
+Once installed and configured, the face authentication system works seamlessly:
+
+    Login Screen: When you reach the login screen, the system will attempt to authenticate you using facial recognition. If successful, you'll be logged in without entering a password.
+
+    Lock Screen: When unlocking your screen, facial recognition will attempt to authenticate you automatically.
+
+    sudo Commands: If configured, when you run a command with sudo, you can authenticate using your face instead of typing your password.
+
+If facial authentication fails, the system will fall back to password authentication.
+❓ Common Issues & Troubleshooting
+NumPy Version Issues
+
+Symptom: Error message about NumPy 1.x vs NumPy 2.x compatibility.
+
+Solution: Downgrade NumPy to a compatible version:
+bash
+
+sudo pip3 install numpy==1.26.4 --force-reinstall
+
+Permission Denied Errors
+
+Symptom: Permission denied errors when accessing files:
+Code
+
+Permission denied: '/var/lib/face-auth/nguynqh.txt'
+
+or
+Code
+
+Permission denied: '/var/log/face-auth.log'
+
+Solution: Fix permissions with:
+bash
+
+# For face data directory
+sudo chmod 775 /var/lib/face-auth
+sudo touch /var/lib/face-auth/nguynqh.txt
+sudo chown nguynqh:nguynqh /var/lib/face-auth/nguynqh.txt
+sudo chmod 644 /var/lib/face-auth/nguynqh.txt
+
+# For log files
+sudo mkdir -p /var/log/face-auth
+sudo touch /var/log/face-auth.log
+sudo chmod 666 /var/log/face-auth.log
+
+Lock Screen Not Working
+
+Symptom: Face authentication works for login and sudo but not for the lock screen.
+
+Solution: Create or update the gnome-screensaver PAM configuration:
+bash
+
+sudo cp /etc/pam.d/gdm-password /etc/pam.d/gnome-screensaver
+
+If that doesn't work, check Wayland-specific configurations:
+bash
+
+# Create a policy for camera access on lock screen
+sudo nano /etc/polkit-1/localauthority/50-local.d/45-allow-camera-lock-screen.pkla
+
+Add:
+Code
+
+[Allow Camera Access on Lock Screen]
+Identity=unix-user:*
+Action=org.freedesktop.login1.session-self-access-devices;org.freedesktop.camera.access
+ResultAny=yes
+ResultInactive=yes
+ResultActive=yes
+
+🔒 Security Notes
+
+    Face authentication adds convenience but may not be as secure as a strong password for highly sensitive systems
+    Use good lighting for better recognition accuracy
+    For maximum security, consider using face authentication alongside traditional password authentication
+    The system uses liveness detection (blinking) to help prevent photo-based spoofing
+
+📊 Performance Factors
+
+The system's performance depends on several factors:
+
+    Lighting: Good, consistent lighting improves recognition accuracy
+    Camera quality: Higher resolution cameras provide better facial details
+    System resources: Face recognition requires moderate CPU power
+    Distance from camera: Optimal distance is typically 30-60cm from the camera
+    Face position: Straight-on face view works best
+
