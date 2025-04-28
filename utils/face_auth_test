@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+import sys
+import os
+import argparse
+import getpass
+sys.path.append('/usr/lib/face-auth')
+from face_auth.authenticator import FaceAuthenticator
+
+class SimpleCallback:
+    def __call__(self, status, message):
+        print(f"Trạng thái: {status}, Thông báo: {message}")
+
+def main():
+    parser = argparse.ArgumentParser(description='Kiểm tra xác thực khuôn mặt')
+    parser.add_argument('username', nargs='?', help='Tên người dùng để kiểm tra')
+    
+    args = parser.parse_args()
+    
+    # Nếu không có username, sử dụng người dùng hiện tại
+    username = args.username if args.username else getpass.getuser()
+    
+    print(f"Kiểm tra xác thực khuôn mặt cho người dùng: {username}")
+    
+    # Kiểm tra xem người dùng đã đăng ký chưa
+    face_id_file = f"/var/lib/face-auth/{username}.txt"
+    if not os.path.exists(face_id_file):
+        print(f"Người dùng {username} chưa đăng ký xác thực khuôn mặt.")
+        print(f"Vui lòng chạy: face_auth_register {username}")
+        return 1
+    
+    # Tạo callback đơn giản để hiển thị thông báo
+    callback = SimpleCallback()
+    
+    # Tạo đối tượng xác thực
+    authenticator = FaceAuthenticator(username, callback)
+    
+    # Thực hiện xác thực
+    print("Bắt đầu xác thực. Nhìn vào camera...")
+    result = authenticator.authenticate()
+    
+    if result:
+        print("Xác thực thành công!")
+        return 0
+    else:
+        print("Xác thực thất bại!")
+        return 1
+
+if __name__ == "__main__":
+    sys.exit(main())

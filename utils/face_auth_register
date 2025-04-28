@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+import os
+import sys
+import argparse
+import subprocess
+import pwd
+import getpass
+
+def get_username():
+    """Lấy tên người dùng hiện tại"""
+    return os.environ.get('USER', os.environ.get('LOGNAME', getpass.getuser()))
+
+def run_as_user(username, cmd):
+    """Chạy lệnh với quyền của người dùng cụ thể"""
+    user_info = pwd.getpwnam(username)
+    
+    # Xác định session loại nào: Wayland hay X11
+    session_type = os.environ.get('XDG_SESSION_TYPE', '')
+    display = os.environ.get('DISPLAY', '')
+    wayland_display = os.environ.get('WAYLAND_DISPLAY', '')
+    
+    # Thiết lập môi trường
+    env = os.environ.copy()
+    env['HOME'] = user_info.pw_dir
+    
+    if session_type == 'wayland' and wayland_display:
+        # Nếu là Wayland
+        env['XDG_RUNTIME_DIR'] = f"/run/user/{user_info.pw_uid}"
+        env['WAYLAND_DISPLAY'] = wayland_display
+        print(f"Phát hiện Wayland session: {wayland_display}")
+    elif display:
+        # Nếu là X11
+        env['DISPLAY'] = display
+        env['XAUTHORITY'] = os.path.join(user_info.pw_dir, '.Xauthority')
+        print(f"Phát hiện X11 session: {display}")
+    else:
+        print("Không phát hiện session đồ họa. Vui lòng đảm bảo bạn đang chạy trong môi trường đồ họa.")
+        return False
+    
+    # Dùng pkexec để chạy với quyền người dùng và giữ nguyên môi trường
+    pkexec_cmd = ['pkexec', '--user', username]
+    
+    # Cấp phép X11 nếu cần
+    if display and os.geteuid() == 0:
+        try:
+            subprocess.run(['xhost', f"+SI:localuser:{username}"], check=False)
+        except:
+            pass
+    
+    # Kết hợp lệnh đầy đủ
+    full_cmd = pkexec_cmd + ['env'] + [f"{k}={v}" for k, v in env.items() if k in 
+              ['DISPLAY', 'WAYLAND_DISPLAY', 'XDG_RUNTIME_DIR', 'XAUTHORITY', 'HOME']] + cmd
+    
+    print(f"Chạy lệnh: {' '.join(full_cmd)}")
+    return subprocess.call(full_cmd)
+
+def main():
+    parser = argparse.ArgumentParser(description='Đăng ký xác thực khuôn mặt cho người dùng')
+    parser.add_argument('username', nargs='?', help='Tên người dùng cần đăng ký (mặc định là người dùng hiện tại)')
+    
+    args = parser.parse_args()
+    
+    # Lấy tên người dùng
+    username = args.username if args.username else get_username()
+    
+    # Kiểm tra tên người dùng hợp lệ
+    try:
+        pwd.getpwnam(username)
+    except KeyError:
+        print(f"Lỗi: Người dùng '{username}' không tồn tại trên hệ thống.")
+        return 1
+    
+    print(f"Bắt đầu đăng ký xác thực khuôn mặt cho người dùng: {username}")
+    
+    # Kiểm tra xem file xác thực đã tồn tại chưa
+    face_data_file = f"/var/lib/face-auth/{username}.txt"
+    if os.path.exists(face_data_file):
+        response = input(f"Người dùng {username} đã đăng ký trước đó. Bạn có muốn đăng ký lại không? (y/n): ")
+        if response.lower() != 'y':
+            print("Hủy đăng ký.")
+            return 0
+    
+    # Nếu chạy với quyền root, đảm bảo thư mục lưu trữ tồn tại
+    if os.geteuid() == 0:
+        os.makedirs("/var/lib/face-auth", exist_ok=True)
+        os.chmod("/var/lib/face-auth", 0o755)
+    
+    # Lệnh để chạy ứng dụng đăng ký
+    register_cmd = ['/usr/bin/python3', '/usr/lib/face-auth/register_ui.py', username]
+    
+    # Chạy ứng dụng với quyền của người dùng thích hợp
+    result = run_as_user(username, register_cmd)
+    
+    if result == 0:
+        # Đảm bảo quyền truy cập thích hợp cho file dữ liệu
+        if os.geteuid() == 0 and os.path.exists(face_data_file):
+            os.chmod(face_data_file, 0o644)
+        print("Đăng ký xác thực khuôn mặt thành công!")
+        return 0
+    else:
+        print("Đăng ký xác thực khuôn mặt thất bại!")
+        return 1
+
+if __name__ == "__main__":
+    sys.exit(main())
