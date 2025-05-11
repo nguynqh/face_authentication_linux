@@ -1,0 +1,16 @@
+[Unit]
+Description=Face Authentication Service
+After=graphical.target
+
+[Service]
+Type=simple
+User=izzy
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/izzy/.Xauthority
+WorkingDirectory=/home/izzy/code/face_authentication_linux
+ExecStart=/usr/bin/python3 /home/izzy/code/face_authentication_linux/gui/authenticate.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=graphical.target 
